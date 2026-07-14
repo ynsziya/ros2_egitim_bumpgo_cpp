@@ -8,7 +8,7 @@ namespace ros2_egitim_bumpgo_cpp
 
     EgitimBumpGoNode::EgitimBumpGoNode() : Node("egitim_bumpgo")
     {
-        declare_parameter<double>("obstacle_distance", 0.15);
+        declare_parameter<double>("obstacle_distance", 0.5);
         declare_parameter<double>("front_angle", 45.0);
         declare_parameter<double>("linear_speed", 0.2);
         declare_parameter<double>("angular_speed", 0.3);
@@ -59,6 +59,8 @@ namespace ros2_egitim_bumpgo_cpp
                 if(min_front < obstacle_distance_)
                 {
                     change_state(RobotState::BACKING);
+                    output_vel.linear.x = -backup_speed_;
+                    break;
                 }
 
                 output_vel.linear.x = linear_speed_;
@@ -68,6 +70,8 @@ namespace ros2_egitim_bumpgo_cpp
                 if((now() - state_ts_).seconds() >= backing_time_)
                 {
                     change_state(RobotState::TURNING);
+                    output_vel.angular.z = angular_speed_;
+                    break;
                 }
                 output_vel.linear.x = -backup_speed_;
                 break;
@@ -76,6 +80,8 @@ namespace ros2_egitim_bumpgo_cpp
                 if((now() - state_ts_).seconds() >= turning_time_)
                 {
                     change_state(RobotState::DRIVING);
+                    output_vel.linear.x = linear_speed_;
+                    break;
                 }
                 output_vel.angular.z = angular_speed_;
                 break;
@@ -90,7 +96,7 @@ namespace ros2_egitim_bumpgo_cpp
     {
         float min_dist  = std::numeric_limits<float>::infinity();
 
-        const float front_angle_limit = M_PI / 6;   // 30 Derece
+        const float front_angle_limit = front_angle_ * M_PI / 180;
 
         float angle = scan.angle_min;
 

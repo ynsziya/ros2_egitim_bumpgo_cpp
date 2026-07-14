@@ -1,6 +1,11 @@
+import os
+
+from ament_index_python.packages import get_package_share_directory
+
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 def generate_launch_description():
@@ -29,6 +34,24 @@ def generate_launch_description():
         description='Dönme süresi (saniye)'
     )
 
+    # --- Sim launch argümanı (br2_tiago ile uyumlu) ---
+    world_arg = DeclareLaunchArgument(
+        'world',
+        default_value='house',
+        description='Gazebo dünya adı',
+    )
+
+    # --- br2_tiago sim.launch.py dahil et ---
+    br2_tiago_dir = get_package_share_directory('br2_tiago')
+
+    sim_lauch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(br2_tiago_dir, 'launch', 'sim.launch.py')
+        ),
+        launch_arguments={
+            'world': LaunchConfiguration('world'),
+        }.items(),
+    )
 
     egitim_bumpgo_cmd = Node(
         package='ros2_egitim_bumpgo_cpp',
@@ -51,5 +74,7 @@ def generate_launch_description():
     ld.add_action(linear_speed_arg)
     ld.add_action(backing_time_arg)
     ld.add_action(turning_time_arg)
+    ld.add_action(sim_lauch)  # sim + Gazebo + Tiago
     ld.add_action(egitim_bumpgo_cmd)
+
     return ld

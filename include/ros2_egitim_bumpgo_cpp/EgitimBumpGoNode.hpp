@@ -22,7 +22,6 @@ namespace ros2_egitim_bumpgo_cpp
 
         private:
             void scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
-            void publish_cmd(double linear_x, double angular_z);
             float min_range_in_front(const sensor_msgs::msg::LaserScan & scan) const;
             void change_state(RobotState new_state);
 
@@ -31,7 +30,7 @@ namespace ros2_egitim_bumpgo_cpp
 
             RobotState state_{RobotState::DRIVING};
 
-            double obstacle_distance_{0.15};
+            double obstacle_distance_{0.5};
             double front_angle_{30.0};
             double linear_speed_{0.2};
             double angular_speed_{0.3};
