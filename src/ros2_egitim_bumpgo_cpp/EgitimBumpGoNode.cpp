@@ -56,7 +56,6 @@ namespace ros2_egitim_bumpgo_cpp
         switch (state_) 
         {
             case RobotState::DRIVING:
-                RCLCPP_WARN(get_logger(), "New State: DRIVING");
                 if(min_front < obstacle_distance_)
                 {
                     change_state(RobotState::BACKING);
@@ -68,7 +67,6 @@ namespace ros2_egitim_bumpgo_cpp
                 break;
 
             case RobotState::BACKING:
-                RCLCPP_WARN(get_logger(), "New State: BACKING");
                 if((now() - state_ts_).seconds() >= backing_time_)
                 {
                     change_state(RobotState::TURNING);
@@ -79,7 +77,6 @@ namespace ros2_egitim_bumpgo_cpp
                 break;
 
             case RobotState::TURNING:
-                RCLCPP_WARN(get_logger(), "New State: TURNING");
                 if((now() - state_ts_).seconds() >= turning_time_)
                 {
                     change_state(RobotState::DRIVING);
@@ -124,7 +121,23 @@ namespace ros2_egitim_bumpgo_cpp
 
     void EgitimBumpGoNode::change_state(RobotState new_state)
     {
+        RCLCPP_INFO(
+            get_logger(), "State: %s → %s",
+            state_to_str(state_), state_to_str(new_state));
+
         state_ = new_state;
         state_ts_ = now();
+
+        
+    }
+
+    const char * EgitimBumpGoNode::state_to_str(RobotState s) const
+    {
+        switch (s) {
+            case RobotState::DRIVING: return "DRIVING";
+            case RobotState::BACKING: return "BACKING";
+            case RobotState::TURNING: return "TURNING";
+        }
+        return "UNKNOWN";
     }
 }

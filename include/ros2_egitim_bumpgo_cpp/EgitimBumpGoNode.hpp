@@ -24,6 +24,7 @@ namespace ros2_egitim_bumpgo_cpp
             void scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
             float min_range_in_front(const sensor_msgs::msg::LaserScan & scan) const;
             void change_state(RobotState new_state);
+            const char * state_to_str(RobotState s) const;
 
             rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
             rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;

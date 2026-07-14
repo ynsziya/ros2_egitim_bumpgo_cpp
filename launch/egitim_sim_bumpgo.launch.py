@@ -59,17 +59,16 @@ def generate_launch_description():
         output='screen',
 
         parameters=[{
+            'use_sim_time': True,
             'obstacle_distance' : LaunchConfiguration('obstacle_distance'),
-            'front_angle' : LaunchConfiguration('front_angle'),
             'linear_speed' : LaunchConfiguration('linear_speed'),
-            'angular_speed' : LaunchConfiguration('angular_speed'),
-            'backup_speed' : LaunchConfiguration('backup_speed'),
             'backing_time' : LaunchConfiguration('backing_time'),
             'turning_time' : LaunchConfiguration('turning_time'),
         }]
     )
 
     ld = LaunchDescription()
+    ld.add_action(world_arg)
     ld.add_action(obstacle_distance_arg)
     ld.add_action(linear_speed_arg)
     ld.add_action(backing_time_arg)
